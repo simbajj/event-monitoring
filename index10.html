@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>경쟁사 이벤트 모니터링</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #f7f9fb;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 16px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .header-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #222;
+    }
+    .badge {
+      background: #e3e8f0;
+      color: #3b82f6;
+      font-size: 0.9rem;
+      border-radius: 12px;
+      padding: 2px 10px;
+      margin-left: 8px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+    .search-filter-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #fff;
+    }
+    .select, .btn-filter, .btn-view {
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .event-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      min-height: 400px;
+      align-items: stretch;
+    }
+    .event-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.2s, transform 0.2s;
+      min-height: 370px;
+      max-width: 400px;
+      width: min(100%, 400px);
+    }
+    .event-card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+      transform: translateY(-8px) scale(1.025);
+    }
+    .event-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      background: #e5e7eb;
+    }
+    .event-content {
+      padding: 18px 16px 14px 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .event-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0 0 2px 0;
+      color: #222;
+    }
+    .event-meta {
+      font-size: 0.95rem;
+      color: #6b7280;
+      margin-bottom: 2px;
+    }
+    .event-info {
+      font-size: 0.93rem;
+      color: #374151;
+      margin-bottom: 2px;
+    }
+    .event-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .event-action {
+      color: #6b7280;
+      font-size: 1.1rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      transition: color 0.2s;
+    }
+    .event-action:hover {
+      color: #2563eb;
+    }
+    .filter-panel {
+      width: 260px;
+      min-width: 220px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 18px 18px 18px 18px;
+      margin-right: 0;
+      font-size: 1rem;
+      position: sticky;
+      top: 32px;
+      height: fit-content;
+    }
+    .filter-header {
+      font-weight: 700;
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .filter-close {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: #888;
+      cursor: pointer;
+      display: none;
+    }
+    .filter-section {
+      margin-bottom: 18px;
+    }
+    .filter-label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #374151;
+    }
+    .filter-section label {
+      font-weight: 400;
+      color: #222;
+      margin-bottom: 2px;
+      display: block;
+      cursor: pointer;
+    }
+    .filter-section input[type="checkbox"] {
+      margin-right: 6px;
+    }
+    .filter-section input[type="date"] {
+      margin-top: 2px;
+      margin-bottom: 2px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      font-size: 1rem;
+    }
+    .filter-divider {
+      border-top: 1px solid #e5e7eb;
+      margin: 14px 0 14px 0;
+    }
+    .filter-section label.filter-checked {
+      background: #e6f2fb;
+      border-radius: 7px;
+      color: #2563eb;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" style="display:flex; gap:32px; align-items:flex-start;">
+    <!-- 필터 패널 -->
+    <aside class="filter-panel">
+      <div class="filter-section">
+        <div class="filter-label">경쟁사</div>
+        <label><input type="checkbox" class="filter-competitor" value="한게임"> 한게임</label><br>
+        <label><input type="checkbox" class="filter-competitor" value="윈조이"> 윈조이</label><br>
+        <label><input type="checkbox" class="filter-competitor" value="기타"> 기타</label>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-section">
+        <div class="filter-label">게임</div>
+        <label><input type="checkbox" class="filter-game" value="한게임 포커"> 한게임 포커</label><br>
+        <label><input type="checkbox" class="filter-game" value="한게임 포커 클래식"> 한게임 포커 클래식</label><br>
+        <label><input type="checkbox" class="filter-game" value="한게임 섯다"> 한게임 섯다</label><br>
+        <label><input type="checkbox" class="filter-game" value="한게임 신맞고"> 한게임 신맞고</label><br>
+        <label><input type="checkbox" class="filter-game" value="윈조이 포커"> 윈조이 포커</label><br>
+        <label><input type="checkbox" class="filter-game" value="윈조이 WPL"> 윈조이 WPL</label><br>
+        <label><input type="checkbox" class="filter-game" value="GG Poker"> GG Poker</label><br>
+        <label><input type="checkbox" class="filter-game" value="Pokerstars"> Pokerstars</label><br>
+        <label><input type="checkbox" class="filter-game" value="Pebble City"> Pebble City</label>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-section">
+        <div class="filter-label">플랫폼</div>
+        <label><input type="checkbox" class="filter-platform" value="PC"> PC</label><br>
+        <label><input type="checkbox" class="filter-platform" value="모바일"> 모바일</label><br>
+        <label><input type="checkbox" class="filter-platform" value="웹"> 웹</label><br>
+        <label><input type="checkbox" class="filter-platform" value="콘솔"> 콘솔</label>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-section">
+        <div class="filter-label">이벤트 종류</div>
+        <label><input type="checkbox" class="filter-type" value="프로모션"> 프로모션</label><br>
+        <label><input type="checkbox" class="filter-type" value="업데이트"> 업데이트</label><br>
+        <label><input type="checkbox" class="filter-type" value="신규 출시"> 신규 출시</label><br>
+        <label><input type="checkbox" class="filter-type" value="제휴"> 제휴</label><br>
+        <label><input type="checkbox" class="filter-type" value="시즌 이벤트"> 시즌 이벤트</label><br>
+        <label><input type="checkbox" class="filter-type" value="기타 이벤트"> 기타 이벤트</label><br>
+        <label><input type="checkbox" class="filter-type" value="할인"> 할인</label><br>
+        <label><input type="checkbox" class="filter-type" value="경품 이벤트"> 경품 이벤트</label>
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-section">
+        <div class="filter-label">이벤트 기간</div>
+        <label style="font-size:0.97em;">시작일<br><input type="date" class="filter-date" id="filterStart"></label><br>
+        <label style="font-size:0.97em;">종료일<br><input type="date" class="filter-date" id="filterEnd"></label>
+      </div>
+    </aside>
+    <div style="flex:1; min-width:0;">
+    <div class="header">
+      <div class="header-title">
+        경쟁사 이벤트 모니터링 <span class="badge">신규 이벤트</span>
+      </div>
+      <div class="header-actions">
+        <span id="adminWelcomeMsg" style="display:none; margin-right:10px; font-weight:500; color:#2563eb;">admin님 환영합니다.</span>
+        <button class="btn-cancel" id="logoutBtn" style="display:none;">로그아웃</button>
+        <button class="btn-primary" id="openModalBtn" type="button">+ 이벤트 등록</button>
+      </div>
+    </div>
+    <div class="search-filter-row">
+      <input class="search-input" type="text" placeholder="이벤트 제목, 경쟁사, 게임명으로 검색...">
+      <select class="select">
+        <option>최신순</option>
+        <option>인기순</option>
+        <option>마감임박순</option>
+      </select>
+      <button class="btn-view">📋</button>
+      <button class="btn-view">☰</button>
+    </div>
+    <div class="event-grid">
+      <!-- 이벤트 카드는 JS에서 동적으로 추가됩니다 -->
+    </div>
+  </div>
+
+  <!-- 이벤트 등록 모달 -->
+  <div id="eventModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-title">새 이벤트 등록</span>
+        <button class="modal-preview">👁️ 미리보기</button>
+      </div>
+      <form class="event-form" id="eventForm">
+        <label>이벤트 제목 <span class="required">*</span></label>
+        <input type="text" placeholder="이벤트 제목을 입력하세요" required id="formTitle">
+        <div class="form-row">
+          <div class="form-group">
+            <label>경쟁사 (optional)</label>
+            <select id="formCompetitor">
+              <option value="">선택하세요</option>
+              <option>한게임</option>
+              <option>윈조이</option>
+              <option>기타</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>게임명 <span class="required">*</span></label>
+            <select required id="formGame">
+              <option value="">선택하세요</option>
+              <option>한게임 포커</option>
+              <option>한게임 포커 클래식</option>
+              <option>한게임 섯다</option>
+              <option>한게임 신맞고</option>
+              <option>윈조이 포커</option>
+              <option>윈조이 WPL</option>
+              <option>GG Poker</option>
+              <option>Pokerstars</option>
+              <option>Pebble City</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>플랫폼 <span class="required">*</span></label>
+            <div class="checkbox-group" id="formPlatformGroup">
+              <label><input type="checkbox" value="PC"> PC</label>
+              <label><input type="checkbox" value="모바일"> 모바일</label>
+              <label><input type="checkbox" value="웹"> 웹</label>
+              <label><input type="checkbox" value="콘솔"> 콘솔</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>이벤트 종류 <span class="required">*</span></label>
+            <select required id="formType">
+              <option>선택하세요</option>
+              <option>할인</option>
+              <option>업데이트</option>
+              <option>신규 출시</option>
+              <option>시즌 이벤트</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>시작일 <span class="required">*</span></label>
+            <input type="date" required id="formStart">
+          </div>
+          <div class="form-group">
+            <label>종료일 <span class="required">*</span></label>
+            <input type="date" required id="formEnd">
+          </div>
+        </div>
+        <label>이벤트 이미지 (선택사항, 최대 4장)</label>
+        <div class="image-upload-box" id="imageDropArea">
+          <div class="image-upload-instructions" id="imageUploadInstructions">
+            <span class="image-icon">🖼️</span><br>
+            이미지를 <b>복사해서 붙여넣기(Ctrl+V)</b> 하거나,<br>
+            이 영역에 <b>드래그&드롭</b> 하세요.<br>
+            (최대 4장, 파일 업로드/URL 입력은 지원하지 않습니다)
+          </div>
+          <div class="image-multi-preview" id="imageMultiPreview"></div>
+        </div>
+        <label>참고 URL</label>
+        <input type="text" placeholder="https://example.com/event-page" id="formLink">
+        <label>이벤트 내용 <span class="required">*</span></label>
+        <textarea rows="3" placeholder="이벤트 상세 내용을 입력하세요" required id="formContent"></textarea>
+        <label>혜택/보상 <span class="required">*</span></label>
+        <textarea rows="2" placeholder="제공되는 혜택과 보상을 입력하세요" required id="formBenefit"></textarea>
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" id="cancelModalBtn">취소</button>
+          <button type="submit" class="btn-primary" id="formSubmitBtn">등록</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 이벤트 상세 모달 -->
+  <div id="eventDetailModal" class="modal">
+    <div class="modal-content detail-modal-content">
+      <div class="modal-header">
+        <span class="modal-title">이벤트 상세 정보</span>
+        <button class="modal-close" id="closeDetailModalBtn">&times;</button>
+      </div>
+      <div class="detail-main">
+        <div class="detail-body">
+          <div class="detail-title" id="detailTitle"></div>
+          <div class="detail-meta">
+            <span id="detailCompetitor"></span>
+            · <span id="detailGame"></span>
+            · <span id="detailType"></span>
+          </div>
+          <img id="detailImage" class="detail-image" src="" alt="이벤트 이미지">
+          <div class="detail-section">
+            <div class="detail-section-title">이벤트 내용</div>
+            <div class="detail-section-content" id="detailContent"></div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-section-title">혜택/보상</div>
+            <div class="detail-section-content detail-benefit" id="detailBenefit"></div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-section-title">참고 링크</div>
+            <div class="detail-section-content"><a id="detailLink" href="#" target="_blank">이벤트 페이지 바로가기</a></div>
+          </div>
+        </div>
+        <div class="detail-side">
+          <div class="detail-box">
+            <div class="detail-box-title">기본 정보</div>
+            <div class="detail-box-row"><span>이벤트 기간</span><br><span id="detailPeriod"></span></div>
+            <div class="detail-box-row"><span>플랫폼</span><br><span id="detailPlatform"></span></div>
+            <div class="detail-box-row"><span>이벤트 종류</span><br><span id="detailType2"></span></div>
+          </div>
+          <div class="detail-box">
+            <div class="detail-box-title">메타 정보</div>
+            <div class="detail-box-row"><span>생성일</span><br><span id="detailCreated"></span></div>
+            <div class="detail-box-row"><span>수정일</span><br><span id="detailUpdated"></span></div>
+          </div>
+          <div class="detail-edit-btn-box">
+            <button class="btn-primary" id="editEventBtn">수정</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관리자 코드 입력 모달 -->
+  <div id="adminCodeModal" class="modal">
+    <div class="modal-content admin-modal-content">
+      <div class="modal-header">
+        <span class="modal-title">관리자 인증</span>
+      </div>
+      <div class="admin-modal-body">
+        <div id="adminCodePrompt">관리자 코드를 입력하세요</div>
+        <input type="password" id="adminCodeInput" class="admin-code-input" placeholder="관리자 코드 입력">
+        <div id="adminCodeError" class="admin-code-error" style="display:none;">코드가 틀립니다.</div>
+        <div class="admin-modal-actions">
+          <button class="btn-primary" id="adminCodeConfirmBtn">확인</button>
+          <button class="btn-cancel" id="adminCodeCancelBtn">취소</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.25);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal.show { display: flex; }
+    .modal-content {
+      background: #fff;
+      border-radius: 12px;
+      width: 600px;
+      max-width: 95vw;
+      max-height: 95vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+      padding: 32px 28px 24px 28px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      color: #888;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .modal-preview {
+      background: #f3f4f6;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 1rem;
+      color: #374151;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .event-form label { font-weight: 500; margin-top: 10px; display: block; }
+    .event-form input[type="text"],
+    .event-form input[type="date"],
+    .event-form select,
+    .event-form textarea {
+      width: 100%;
+      padding: 8px 10px;
+      margin: 4px 0 10px 0;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #f9fafb;
+      resize: none;
+    }
+    .form-row {
+      display: flex;
+      gap: 16px;
+    }
+    .form-group { flex: 1; }
+    .checkbox-group { display: flex; gap: 10px; margin-top: 4px; }
+    .image-upload-box {
+      border: 2px dashed #d1d5db;
+      border-radius: 8px;
+      padding: 18px;
+      text-align: center;
+      margin-bottom: 10px;
+      background: #f9fafb;
+    }
+    .image-upload-instructions { color: #6b7280; font-size: 0.98rem; }
+    .image-icon { font-size: 2.2rem; display: block; margin-bottom: 6px; }
+    .image-upload-actions { margin-top: 10px; display: flex; gap: 10px; justify-content: center; }
+    .image-upload-actions button {
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 1rem;
+      color: #374151;
+      cursor: pointer;
+    }
+    .image-url-input {
+      margin-bottom: 10px;
+      font-size: 0.98rem;
+      color: #6b7280;
+    }
+    .required { color: #ef4444; font-size: 1.1em; }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .btn-cancel {
+      background: #f3f4f6;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-size: 1rem;
+      color: #374151;
+      cursor: pointer;
+    }
+    .detail-modal-content {
+      width: 800px;
+      max-width: 98vw;
+      padding: 0;
+      gap: 0;
+    }
+    .detail-main {
+      display: flex;
+      flex-direction: row;
+      gap: 0;
+      min-height: 500px;
+    }
+    .detail-body {
+      flex: 2;
+      padding: 32px 32px 24px 32px;
+    }
+    .detail-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .detail-meta {
+      color: #6b7280;
+      font-size: 1rem;
+      margin-bottom: 18px;
+    }
+    .detail-image {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 18px;
+      background: #e5e7eb;
+    }
+    .detail-section {
+      margin-bottom: 18px;
+    }
+    .detail-section-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #222;
+    }
+    .detail-section-content {
+      background: #f3f4f6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 1rem;
+      color: #374151;
+    }
+    .detail-benefit {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+    .detail-side {
+      flex: 1;
+      background: #f7f9fb;
+      border-left: 1px solid #e5e7eb;
+      padding: 32px 24px 24px 24px;
+      min-width: 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+    }
+    .detail-edit-btn-box {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      flex: 1;
+      margin-top: auto;
+    }
+    .detail-edit-btn-box .btn-primary {
+      min-width: 80px;
+      font-size: 1rem;
+      padding: 8px 20px;
+    }
+    .detail-box {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      padding: 16px 14px 12px 14px;
+      margin-bottom: 8px;
+    }
+    .detail-box-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #2563eb;
+      font-size: 1.05rem;
+    }
+    .detail-box-row {
+      font-size: 0.98rem;
+      margin-bottom: 8px;
+      color: #374151;
+    }
+    @media (max-width: 900px) {
+      .detail-main { flex-direction: column; }
+      .detail-side { border-left: none; border-top: 1px solid #e5e7eb; min-width: 0; padding: 24px 16px; }
+    }
+    .image-preview-wrapper {
+      display: block;
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+    }
+    .remove-image-btn {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+    .remove-image-btn:hover {
+      background: #ef4444;
+    }
+    .admin-modal-content {
+      width: 350px;
+      max-width: 90vw;
+      padding: 32px 24px 24px 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .admin-modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: stretch;
+    }
+    .admin-code-input {
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 1rem;
+      margin-bottom: 2px;
+    }
+    .admin-code-error {
+      color: #ef4444;
+      font-size: 1rem;
+      margin-bottom: 2px;
+      text-align: left;
+    }
+    .admin-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .image-multi-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .image-multi-preview .multi-image-thumb {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f3f4f6;
+      margin-bottom: 2px;
+    }
+    .image-multi-preview .multi-image-thumb img {
+      display: block;
+      max-width: 180px;
+      max-height: 120px;
+      border-radius: 8px;
+    }
+    .image-multi-preview .remove-image-btn {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 1rem;
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+    .image-multi-preview .remove-image-btn:hover {
+      background: #ef4444;
+    }
+  </style>
+  <script>
+    const openModalBtn = document.getElementById('openModalBtn');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    const eventModal = document.getElementById('eventModal');
+    window.onclick = function(event) {
+      if (event.target === eventModal) eventModal.classList.remove('show');
+    }
+
+    // 1. 이벤트 데이터 배열 선언 (초기 카드 데이터도 여기에 넣을 수 있음)
+    let events = [
+      {
+        title: '설날 특별 할인 이벤트',
+        competitor: '윈조이',
+        game: '윈조이 포커',
+        platform: '모바일',
+        type: '할인',
+        start: '2024-02-01',
+        end: '2024-02-14',
+        images: ['https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80'],
+        link: 'https://event.example.com/1',
+        content: '설날을 맞아 모든 아이템 50% 할인 판매',
+        benefit: '아이템 50% 할인, 무료 칩 지급, 경험치 2배',
+      },
+      {
+        title: '신규 게임 모드 오픈',
+        competitor: 'GG Poker',
+        game: 'GG Poker',
+        platform: 'PC,모바일',
+        type: '업데이트',
+        start: '2024-01-20',
+        end: '2024-02-05',
+        images: ['https://images.unsplash.com/photo-1517520287167-4bbf64a00d66?auto=format&fit=crop&w=400&q=80'],
+        link: 'https://event.example.com/2',
+        content: '신규 게임 모드 오픈 기념 이벤트! 다양한 보상과 함께 새로운 모드를 즐겨보세요.',
+        benefit: '신규 모드 플레이 시 보상 지급, 한정 아이템 제공',
+      },
+      {
+        title: '신규 토너먼트 출시 기념 이벤트',
+        competitor: '한게임',
+        game: '한게임 포커',
+        platform: 'PC,모바일',
+        type: '신규 출시',
+        start: '2024-01-15',
+        end: '2024-01-29',
+        images: ['https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80'],
+        link: 'https://event.example.com/3',
+        content: '신규 토너먼트 출시를 기념하여 다양한 경품과 보상을 드립니다.',
+        benefit: '토너먼트 참가자 전원 보상, 상위 입상자 추가 경품',
+      },
+      {
+        title: 'WPL 시즌 시작 이벤트',
+        competitor: '윈조이',
+        game: '윈조이 WPL',
+        platform: 'PC,모바일',
+        type: '시즌 이벤트',
+        start: '2023-12-01',
+        end: '2023-12-31',
+        images: ['https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=crop&w=400&q=80'],
+        link: 'https://event.example.com/4',
+        content: 'WPL 시즌 시작을 기념하여 다양한 이벤트와 보상을 제공합니다.',
+        benefit: '시즌 랭킹 보상, 참가자 전원 기념 아이템',
+      }
+    ];
+
+    // 2. 카드 목록을 렌더링하는 함수 (event-grid 내부에 동적으로 카드 추가)
+    function renderEvents() {
+      const grid = document.querySelector('.event-grid');
+      grid.innerHTML = '';
+      events.forEach((event, idx) => {
+        const card = document.createElement('div');
+        card.className = 'event-card';
+        card.setAttribute('data-competitor', event.competitor);
+        card.setAttribute('data-game', event.game);
+        card.setAttribute('data-platform', event.platform);
+        card.setAttribute('data-type', event.type);
+        card.setAttribute('data-start', event.start);
+        card.setAttribute('data-end', event.end);
+        card.setAttribute('data-images', JSON.stringify(event.images || []));
+        card.innerHTML = `
+          <img class="event-img event-detail-trigger" src="${event.images[0] || ''}" alt="이벤트 이미지"
+            data-title="${event.title}"
+            data-competitor="${event.competitor}"
+            data-game="${event.game}"
+            data-type="${event.type}"
+            data-period="${event.start.replace(/-/g, '년 ').replace(/-(\d{2})$/, '일')} ~ ${event.end.replace(/-/g, '년 ').replace(/-(\d{2})$/, '일')}"
+            data-platform="${event.platform}"
+            data-content="${event.content}"
+            data-benefit="${event.benefit}"
+            data-link="${event.link}"
+            data-created="-"
+            data-updated="-"
+            data-images='${JSON.stringify(event.images || [])}'
+          >
+          <div class="event-content">
+            <div class="event-title">${event.title}</div>
+            <div class="event-meta">${event.competitor ? event.competitor + ' · ' : ''}${event.game}</div>
+            <div class="event-info">${event.start} ~ ${event.end}</div>
+            <div class="event-info">플랫폼: ${event.platform} | 종류: ${event.type}</div>
+            <div class="event-actions">
+              <button class="event-action" title="보기">🔗</button>
+              <button class="event-action" title="수정">✏️</button>
+              <button class="event-action" title="삭제">🗑️</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+        // renderEvents 함수 내 카드 생성 후 내부 버튼에 data-images 추가
+        const editBtn = card.querySelector('.event-action[title="수정"]');
+        if (editBtn) {
+          editBtn.setAttribute('data-images', JSON.stringify(event.images || []));
+        }
+      });
+      // 카드에 상세/수정 트리거 등 기존 바인딩 함수 재호출 필요
+      bindEventDetailTriggers && bindEventDetailTriggers();
+    }
+
+    // 3. 최초 렌더링
+    renderEvents();
+
+    // 4. 폼 제출 시 배열에 추가하고 renderEvents 호출
+    // 이미지 드래그&드롭, 붙여넣기 업로드 구현
+    const imageDropArea = document.getElementById('imageDropArea');
+    const imageUploadInstructions = document.getElementById('imageUploadInstructions');
+    const imageMultiPreview = document.getElementById('imageMultiPreview');
+    let uploadedImages = [];
+
+    function renderMultiPreview() {
+      imageMultiPreview.innerHTML = '';
+      uploadedImages.forEach((imgData, idx) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'multi-image-thumb';
+        const img = document.createElement('img');
+        img.src = imgData;
+        img.alt = '이벤트 이미지';
+        thumb.appendChild(img);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'remove-image-btn';
+        btn.title = '이미지 제거';
+        btn.innerHTML = '&times;';
+        btn.onclick = () => {
+          uploadedImages.splice(idx, 1);
+          renderMultiPreview();
+          if (uploadedImages.length === 0) imageUploadInstructions.style.display = '';
+        };
+        thumb.appendChild(btn);
+        imageMultiPreview.appendChild(thumb);
+      });
+      imageUploadInstructions.style.display = uploadedImages.length > 0 ? 'none' : '';
+    }
+
+    function addImage(fileOrUrl) {
+      if (uploadedImages.length >= 4) return;
+      if (typeof fileOrUrl === 'string') {
+        uploadedImages.push(fileOrUrl);
+        renderMultiPreview();
+      } else {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          uploadedImages.push(e.target.result);
+          renderMultiPreview();
+        };
+        reader.readAsDataURL(fileOrUrl);
+      }
+    }
+
+    imageDropArea.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      imageDropArea.style.background = '#e0e7ef';
+    });
+    imageDropArea.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      imageDropArea.style.background = '';
+    });
+    imageDropArea.addEventListener('drop', function(e) {
+      e.preventDefault();
+      imageDropArea.style.background = '';
+      const files = e.dataTransfer.files;
+      if (files && files.length > 0) {
+        for (let i = 0; i < files.length && uploadedImages.length < 4; i++) {
+          if (files[i].type.startsWith('image/')) {
+            addImage(files[i]);
+          }
+        }
+      }
+    });
+    imageDropArea.addEventListener('paste', function(e) {
+      const items = (e.clipboardData || window.clipboardData).items;
+      for (let i = 0; i < items.length && uploadedImages.length < 4; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          const file = items[i].getAsFile();
+          addImage(file);
+        }
+      }
+    });
+
+    // 상세 모달 열기/닫기
+    const eventDetailModal = document.getElementById('eventDetailModal');
+    const closeDetailModalBtn = document.getElementById('closeDetailModalBtn');
+    const editEventBtn = document.getElementById('editEventBtn');
+    const eventForm = document.getElementById('eventForm');
+    const formTitle = document.getElementById('formTitle');
+    const formCompetitor = document.getElementById('formCompetitor');
+    const formGame = document.getElementById('formGame');
+    const formPlatformGroup = document.getElementById('formPlatformGroup');
+    const formType = document.getElementById('formType');
+    const formStart = document.getElementById('formStart');
+    const formEnd = document.getElementById('formEnd');
+    const formLink = document.getElementById('formLink');
+    const formContent = document.getElementById('formContent');
+    const formBenefit = document.getElementById('formBenefit');
+    const formSubmitBtn = document.getElementById('formSubmitBtn');
+    const modalTitle = document.querySelector('#eventModal .modal-title');
+
+    function bindEventDetailTriggers() {
+      document.querySelectorAll('.event-detail-trigger').forEach(img => {
+        img.onclick = function() {
+          document.getElementById('detailTitle').textContent = img.dataset.title;
+          document.getElementById('detailCompetitor').textContent = img.dataset.competitor;
+          document.getElementById('detailGame').textContent = img.dataset.game;
+          document.getElementById('detailType').textContent = img.dataset.type;
+          document.getElementById('detailImage').src = img.src;
+          document.getElementById('detailContent').textContent = img.dataset.content;
+          document.getElementById('detailBenefit').textContent = img.dataset.benefit;
+          updateDetailLink(img.dataset.link);
+          document.getElementById('detailPeriod').textContent = img.dataset.period;
+          document.getElementById('detailPlatform').textContent = img.dataset.platform;
+          document.getElementById('detailType2').textContent = img.dataset.type;
+          document.getElementById('detailCreated').textContent = img.dataset.created;
+          document.getElementById('detailUpdated').textContent = img.dataset.updated;
+          // 수정 버튼에 현재 이미지의 데이터 저장
+          editEventBtn.dataset.img = img.src;
+          for (const key in img.dataset) {
+            editEventBtn.dataset[key] = img.dataset[key];
+          }
+          if (img.dataset.images) {
+            editEventBtn.dataset.images = img.dataset.images;
+          }
+          eventDetailModal.classList.add('show');
+        }
+      });
+    }
+    bindEventDetailTriggers();
+    closeDetailModalBtn.onclick = () => eventDetailModal.classList.remove('show');
+    window.addEventListener('click', function(event) {
+      if (event.target === eventDetailModal) eventDetailModal.classList.remove('show');
+    });
+    // ESC 키로 상세 모달 닫기
+    window.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        // 관리자 인증 모달이 열려 있으면 그걸 먼저 닫음
+        if (adminCodeModal && adminCodeModal.classList.contains('show')) {
+          closeAdminCodeModal();
+        } else if (eventDetailModal.classList.contains('show')) {
+          eventDetailModal.classList.remove('show');
+        } else if (eventModal.classList.contains('show')) {
+          eventModal.classList.remove('show');
+        }
+      }
+    });
+
+    // 관리자 코드 인증 로직
+    const adminCodeModal = document.getElementById('adminCodeModal');
+    const adminCodeInput = document.getElementById('adminCodeInput');
+    const adminCodeConfirmBtn = document.getElementById('adminCodeConfirmBtn');
+    const adminCodeError = document.getElementById('adminCodeError');
+    const adminCodeCancelBtn = document.getElementById('adminCodeCancelBtn');
+    let adminCallback = null;
+    let isAdminLoggedIn = false;
+
+    function openAdminCodeModal(callback) {
+      adminCodeInput.value = '';
+      adminCodeError.style.display = 'none';
+      adminCodeModal.classList.add('show');
+      adminCallback = callback;
+      setTimeout(() => adminCodeInput.focus(), 100);
+    }
+    function closeAdminCodeModal() {
+      adminCodeModal.classList.remove('show');
+      adminCallback = null;
+    }
+    function setAdminLoginState(loggedIn) {
+      isAdminLoggedIn = loggedIn;
+      document.getElementById('logoutBtn').style.display = loggedIn ? '' : 'none';
+      document.getElementById('adminWelcomeMsg').style.display = loggedIn ? '' : 'none';
+    }
+    adminCodeConfirmBtn.onclick = function() {
+      if (adminCodeInput.value === 'admin') {
+        closeAdminCodeModal();
+        setAdminLoginState(true);
+        if (typeof adminCallback === 'function') adminCallback();
+      } else {
+        adminCodeError.style.display = '';
+      }
+    };
+    adminCodeCancelBtn.onclick = function() {
+      closeAdminCodeModal();
+    };
+    adminCodeInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') adminCodeConfirmBtn.click();
+    });
+    // 모달 외부 클릭 시 닫기
+    window.addEventListener('click', function(event) {
+      if (event.target === adminCodeModal) closeAdminCodeModal();
+    });
+    // 등록/수정 버튼 클릭 시 관리자 인증
+    // 등록 모달은 인증 성공 시에만 열리도록 보장 (중복 실행 방지)
+    openModalBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (isAdminLoggedIn) {
+        modalTitle.textContent = '새 이벤트 등록';
+        formSubmitBtn.textContent = '등록';
+        eventModal.classList.add('show');
+      } else {
+        openAdminCodeModal(function() {
+          modalTitle.textContent = '새 이벤트 등록';
+          formSubmitBtn.textContent = '등록';
+          eventModal.classList.add('show');
+        });
+      }
+    });
+
+    // 등록/수정 모달 취소 버튼 동작
+    if (cancelModalBtn) {
+      cancelModalBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        eventModal.classList.remove('show');
+      });
+    }
+    editEventBtn.onclick = function() {
+      if (isAdminLoggedIn) {
+        modalTitle.textContent = '이벤트 수정';
+        formSubmitBtn.textContent = '수정';
+        formTitle.value = this.dataset.title || '';
+        formCompetitor.value = this.dataset.competitor || '';
+        formGame.value = this.dataset.game || '';
+        const platforms = (this.dataset.platform || '').split(',').map(s => s.trim());
+        formPlatformGroup.querySelectorAll('input[type=checkbox]').forEach(cb => {
+          cb.checked = platforms.includes(cb.value);
+        });
+        formType.value = this.dataset.type || '';
+        const periodMatch = (this.dataset.period||'').match(/(\d{4})년 (\d{1,2})월 (\d{1,2})일 ~ (\d{4})년 (\d{1,2})월 (\d{1,2})일/);
+        if (periodMatch) {
+          formStart.value = `${periodMatch[1]}-${periodMatch[2].padStart(2,'0')}-${periodMatch[3].padStart(2,'0')}`;
+          formEnd.value = `${periodMatch[4]}-${periodMatch[5].padStart(2,'0')}-${periodMatch[6].padStart(2,'0')}`;
+        } else {
+          formStart.value = '';
+          formEnd.value = '';
+        }
+        if (this.dataset.images) {
+          try {
+            uploadedImages = JSON.parse(this.dataset.images);
+          } catch {
+            uploadedImages = this.dataset.img ? [this.dataset.img] : [];
+          }
+          renderMultiPreview();
+        } else if (this.dataset.img) {
+          uploadedImages = [this.dataset.img];
+          renderMultiPreview();
+        } else {
+          uploadedImages = [];
+          renderMultiPreview();
+        }
+        formLink.value = this.dataset.link || '';
+        formContent.value = this.dataset.content || '';
+        formBenefit.value = this.dataset.benefit || '';
+        eventModal.classList.add('show');
+        eventDetailModal.classList.remove('show');
+      } else {
+        openAdminCodeModal(() => {
+          modalTitle.textContent = '이벤트 수정';
+          formSubmitBtn.textContent = '수정';
+          formTitle.value = this.dataset.title || '';
+          formCompetitor.value = this.dataset.competitor || '';
+          formGame.value = this.dataset.game || '';
+          const platforms = (this.dataset.platform || '').split(',').map(s => s.trim());
+          formPlatformGroup.querySelectorAll('input[type=checkbox]').forEach(cb => {
+            cb.checked = platforms.includes(cb.value);
+          });
+          formType.value = this.dataset.type || '';
+          const periodMatch = (this.dataset.period||'').match(/(\d{4})년 (\d{1,2})월 (\d{1,2})일 ~ (\d{4})년 (\d{1,2})월 (\d{1,2})일/);
+          if (periodMatch) {
+            formStart.value = `${periodMatch[1]}-${periodMatch[2].padStart(2,'0')}-${periodMatch[3].padStart(2,'0')}`;
+            formEnd.value = `${periodMatch[4]}-${periodMatch[5].padStart(2,'0')}-${periodMatch[6].padStart(2,'0')}`;
+          } else {
+            formStart.value = '';
+            formEnd.value = '';
+          }
+          if (this.dataset.images) {
+            try {
+              uploadedImages = JSON.parse(this.dataset.images);
+            } catch {
+              uploadedImages = this.dataset.img ? [this.dataset.img] : [];
+            }
+            renderMultiPreview();
+          } else if (this.dataset.img) {
+            uploadedImages = [this.dataset.img];
+            renderMultiPreview();
+          } else {
+            uploadedImages = [];
+            renderMultiPreview();
+          }
+          formLink.value = this.dataset.link || '';
+          formContent.value = this.dataset.content || '';
+          formBenefit.value = this.dataset.benefit || '';
+          eventModal.classList.add('show');
+          eventDetailModal.classList.remove('show');
+        });
+      }
+    };
+   // 로그아웃 버튼
+   document.getElementById('logoutBtn').onclick = function() {
+     setAdminLoginState(false);
+   };
+
+   // 필터 기능 구현
+   function filterEvents() {
+     const checkedCompetitors = Array.from(document.querySelectorAll('.filter-competitor:checked')).map(cb => cb.value);
+     const checkedGames = Array.from(document.querySelectorAll('.filter-game:checked')).map(cb => cb.value);
+     const checkedPlatforms = Array.from(document.querySelectorAll('.filter-platform:checked')).map(cb => cb.value);
+     const checkedTypes = Array.from(document.querySelectorAll('.filter-type:checked')).map(cb => cb.value);
+     const startDate = document.getElementById('filterStart').value;
+     const endDate = document.getElementById('filterEnd').value;
+     document.querySelectorAll('.event-card').forEach(card => {
+       let show = true;
+       // 경쟁사
+       if (checkedCompetitors.length > 0 && !checkedCompetitors.includes(card.dataset.competitor)) show = false;
+       // 게임명
+       if (show && checkedGames.length > 0 && !checkedGames.includes(card.dataset.game)) show = false;
+       // 플랫폼(여러개일 수 있음)
+       if (show && checkedPlatforms.length > 0) {
+         const cardPlatforms = (card.dataset.platform||'').split(',').map(s=>s.trim());
+         if (!checkedPlatforms.some(p => cardPlatforms.includes(p))) show = false;
+       }
+       // 이벤트 종류
+       if (show && checkedTypes.length > 0 && !checkedTypes.includes(card.dataset.type)) show = false;
+       // 기간
+       if (show && startDate && card.dataset.end && card.dataset.end < startDate) show = false;
+       if (show && endDate && card.dataset.start && card.dataset.start > endDate) show = false;
+       card.style.display = show ? '' : 'none';
+     });
+   }
+   document.querySelectorAll('.filter-panel input').forEach(input => {
+     input.addEventListener('change', filterEvents);
+   });
+
+   // 필터 체크 시 label 하이라이트
+   function updateFilterLabelHighlight() {
+     document.querySelectorAll('.filter-section input[type="checkbox"]').forEach(cb => {
+       if (cb.checked) {
+         cb.parentElement.classList.add('filter-checked');
+       } else {
+         cb.parentElement.classList.remove('filter-checked');
+       }
+     });
+   }
+   document.querySelectorAll('.filter-section input[type="checkbox"]').forEach(cb => {
+     cb.addEventListener('change', updateFilterLabelHighlight);
+   });
+   // 최초 렌더링 시도 적용
+   updateFilterLabelHighlight();
+
+   // 이미지 미리보기 함수 (수정 모달에서 사용)
+   function showImage(imgUrl) {
+     if (!imgUrl) return;
+     if (typeof imagePreview !== 'undefined' && typeof imagePreviewWrapper !== 'undefined' && typeof imageUploadInstructions !== 'undefined') {
+       imagePreview.src = imgUrl;
+       imagePreviewWrapper.style.display = '';
+       imageUploadInstructions.style.display = 'none';
+     }
+   }
+
+   // 이벤트 등록/수정 폼 제출 처리 (새로고침 방지 및 관리자 인증 체크)
+   eventForm.addEventListener('submit', function(e) {
+     e.preventDefault(); // 새로고침 방지
+     if (!isAdminLoggedIn) {
+       alert('관리자 인증이 필요합니다.');
+       return;
+     }
+     // 폼 데이터 수집
+     const newEvent = {
+       title: formTitle.value,
+       competitor: formCompetitor.value,
+       game: formGame.value,
+       platform: Array.from(formPlatformGroup.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value).join(','),
+       type: formType.value,
+       start: formStart.value,
+       end: formEnd.value,
+       images: [...uploadedImages], // 이미지 배열
+       link: formLink.value,
+       content: formContent.value,
+       benefit: formBenefit.value,
+       // created, updated 등 필요한 필드 추가 가능
+     };
+     // 실제 등록 처리(예: 배열에 추가, 화면 갱신 등)
+     events.unshift(newEvent); // 최신순으로 앞에 추가
+     renderEvents();
+     // 모달 닫기
+     eventModal.classList.remove('show');
+     // 폼 초기화
+     eventForm.reset();
+     uploadedImages = [];
+     renderMultiPreview();
+   });
+
+   // 1. 참고 URL 입력란 value 비우기 (HTML)
+   document.addEventListener('DOMContentLoaded', function() {
+     formLink.value = '';
+   });
+
+   // 2. 상세 모달 참고 URL 처리 (URL 없으면 안내 메시지)
+   const detailLink = document.getElementById('detailLink');
+   function updateDetailLink(url) {
+     if (!url || url.trim() === '' || url === '#') {
+       detailLink.style.display = 'none';
+       if (!document.getElementById('noUrlMsg')) {
+         const msg = document.createElement('span');
+         msg.id = 'noUrlMsg';
+         msg.style.color = '#888';
+         msg.textContent = 'URL이 없습니다.';
+         detailLink.parentNode.appendChild(msg);
+       }
+     } else {
+       detailLink.style.display = '';
+       detailLink.href = url;
+       detailLink.textContent = '이벤트 페이지 바로가기';
+       const msg = document.getElementById('noUrlMsg');
+       if (msg) msg.remove();
+     }
+   }
+  </script>
+</body>
+</html> 
