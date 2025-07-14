@@ -211,6 +211,183 @@
       font-weight: 600;
       transition: background 0.15s;
     }
+    /* 리스트형 스타일 */
+    .event-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .event-list-item {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      padding: 16px;
+      transition: box-shadow 0.15s;
+    }
+    .event-list-item:hover {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    .event-list-thumb {
+      width: 64px; height: 64px; border-radius: 8px; object-fit: cover; margin-right: 20px;
+      background: #f3f4f6;
+    }
+    .event-list-info { flex: 1; min-width:0; }
+    .event-list-title { font-size:1.1em; font-weight:600; margin-bottom:2px; }
+    .event-list-meta { color:#888; font-size:0.97em; margin-bottom:2px; }
+    .event-list-period { color:#2563eb; font-size:0.97em; }
+    .event-list-actions { margin-left: 20px; display:flex; gap:8px; }
+    .view-toggle-group {
+      display: inline-flex;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
+      margin-left: 8px;
+    }
+    .view-toggle {
+      border: none;
+      background: none;
+      padding: 8px 14px;
+      font-size: 1.2em;
+      color: #888;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      outline: none;
+    }
+    .view-toggle.active {
+      background: #2563eb;
+      color: #fff;
+    }
+    .event-grid {
+      display: table;
+      width: 100%;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      overflow: hidden;
+      margin-top: 16px;
+      table-layout: fixed;
+    }
+    .event-grid-header, .event-grid-row {
+      display: table-row;
+    }
+    .event-grid-header {
+      background: #f5f6fa;
+      font-weight: 600;
+      color: #888;
+      font-size: 0.98em;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .event-grid-row {
+      border-bottom: 1.5px solid #e5e7eb;
+      transition: background 0.12s;
+    }
+    .event-grid-row:last-child {
+      border-bottom: none;
+    }
+    .event-grid-row:hover {
+      background: #f3f4f6;
+    }
+    .event-grid-cell {
+      display: table-cell;
+      vertical-align: middle;
+      padding: 14px 16px;
+      font-size: 1em;
+      min-width: 0;
+      word-break: keep-all;
+      white-space: normal;
+      border-right: none;
+      background: #fff;
+    }
+    .event-grid-cell:last-child {
+      border-right: none;
+    }
+    .event-grid-cell.img {
+      width: 48px;
+      padding-right: 0;
+    }
+    .event-grid-thumb {
+      width: 40px; height: 40px; border-radius: 6px; object-fit: cover;
+    }
+    .event-grid-cell.actions {
+      width: 48px;
+      text-align: center;
+    }
+    /* 카드형(그리드) 스타일 */
+    .event-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 16px;
+    }
+    .event-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      width: 100%;
+      padding: 20px 18px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .event-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .event-content { flex: 1; }
+    .event-title { font-size: 1.1em; font-weight: 600; margin-bottom: 2px; }
+    .event-meta { color: #888; font-size: 0.97em; margin-bottom: 2px; }
+    .event-info { color: #2563eb; font-size: 0.97em; }
+    .event-actions { margin-top: 8px; display: flex; gap: 8px; }
+    .event-list-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .event-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(180px, 1fr));
+      gap: 24px;
+      margin-top: 16px;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .event-card {
+      max-width: 260px;
+      width: 100%;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      padding: 14px 10px 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .event-img {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+    .event-grid-table {
+      display: table;
+      width: 100%;
+      border-radius: 16px;
+      background: #fff;
+      border: 1.5px solid #e5e7eb;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      overflow: hidden;
+      margin-top: 16px;
+      table-layout: fixed;
+      padding: 8px 0;
+    }
   </style>
 </head>
 <body>
@@ -281,10 +458,12 @@
         <option>인기순</option>
         <option>마감임박순</option>
       </select>
-      <button class="btn-view">📋</button>
-      <button class="btn-view">☰</button>
+      <div class="view-toggle-group">
+        <button id="gridViewBtn" class="view-toggle active" title="카드형 보기">□</button>
+        <button id="listViewBtn" class="view-toggle" title="리스트형 보기">≡</button>
+      </div>
     </div>
-    <div class="event-grid">
+    <div id="eventGrid" class="event-list-wrapper">
       <!-- 이벤트 카드는 JS에서 동적으로 추가됩니다 -->
     </div>
   </div>
@@ -825,55 +1004,117 @@
     ];
 
     // 2. 카드 목록을 렌더링하는 함수 (event-grid 내부에 동적으로 카드 추가)
+    // JS: 뷰 전환 상태 관리 및 renderEvents 수정
+    let currentView = 'card'; // 'table', 'card', 'list'
+    const gridViewBtn = document.getElementById('gridViewBtn');
+    const listViewBtn = document.getElementById('listViewBtn');
+    gridViewBtn.onclick = function() {
+      currentView = 'card';
+      renderEvents();
+      gridViewBtn.classList.add('active');
+      listViewBtn.classList.remove('active');
+    };
+    listViewBtn.onclick = function() {
+      currentView = 'table';
+      renderEvents();
+      listViewBtn.classList.add('active');
+      gridViewBtn.classList.remove('active');
+    };
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const [y, m, d] = dateStr.split('-');
+      return `${y}년 ${parseInt(m,10)}월 ${parseInt(d,10)}일`;
+    }
+
     function renderEvents() {
-      const grid = document.querySelector('.event-grid');
-      grid.innerHTML = '';
-      events.forEach((event, idx) => {
-        const card = document.createElement('div');
-        card.className = 'event-card';
-        card.setAttribute('data-competitor', event.competitor);
-        card.setAttribute('data-game', event.game);
-        card.setAttribute('data-platform', event.platform);
-        card.setAttribute('data-type', event.type);
-        card.setAttribute('data-start', event.start);
-        card.setAttribute('data-end', event.end);
-        card.setAttribute('data-images', JSON.stringify(event.images || []));
-        card.innerHTML = `
-          <img class="event-img event-detail-trigger" src="${event.images[0] || ''}" alt="이벤트 이미지"
-            data-title="${event.title}"
-            data-competitor="${event.competitor}"
-            data-game="${event.game}"
-            data-type="${event.type}"
-            data-period="${event.start.replace(/-/g, '년 ').replace(/-(\d{2})$/, '일')} ~ ${event.end.replace(/-/g, '년 ').replace(/-(\d{2})$/, '일')}"
-            data-platform="${event.platform}"
-            data-content="${event.content}"
-            data-benefit="${event.benefit}"
-            data-link="${event.link}"
-            data-created="-"
-            data-updated="-"
-            data-images='${JSON.stringify(event.images || [])}'
-          >
-          <div class="event-content">
-            <div class="event-title">${event.title}</div>
-            <div class="event-meta">${event.competitor ? event.competitor + ' · ' : ''}${event.game}</div>
-            <div class="event-info">${event.start} ~ ${event.end}</div>
-            <div class="event-info">플랫폼: ${event.platform} | 종류: ${event.type}</div>
-            <div class="event-actions">
-              <button class="event-action" title="보기">🔗</button>
-              <button class="event-action" title="수정">✏️</button>
-              <button class="event-action" title="삭제">🗑️</button>
-            </div>
+      const grid = document.getElementById('eventGrid');
+      if (currentView === 'table') {
+        grid.className = 'event-grid-table';
+        grid.innerHTML = `
+          <div class="event-grid-header">
+            <div class="event-grid-cell img"></div>
+            <div class="event-grid-cell">이벤트</div>
+            <div class="event-grid-cell">경쟁사/게임</div>
+            <div class="event-grid-cell">플랫폼</div>
+            <div class="event-grid-cell">기간</div>
+            <div class="event-grid-cell actions">작업</div>
           </div>
         `;
-        grid.appendChild(card);
-        // renderEvents 함수 내 카드 생성 후 내부 버튼에 data-images 추가
-        const editBtn = card.querySelector('.event-action[title="수정"]');
-        if (editBtn) {
-          editBtn.setAttribute('data-images', JSON.stringify(event.images || []));
-        }
-      });
-      // 카드에 상세/수정 트리거 등 기존 바인딩 함수 재호출 필요
+        events.forEach(event => {
+          const row = document.createElement('div');
+          row.className = 'event-grid-row';
+          row.innerHTML = `
+            <div class="event-grid-cell img"><img src="${event.images[0] || ''}" class="event-grid-thumb"></div>
+            <div class="event-grid-cell">
+              <div style="font-weight:600;">${event.title}</div>
+              <div style="color:#888;font-size:0.97em;">${event.type}</div>
+            </div>
+            <div class="event-grid-cell">
+              <div>${event.competitor || '-'}</div>
+              <div style="color:#888;font-size:0.97em;">${event.game}</div>
+            </div>
+            <div class="event-grid-cell">${event.platform}</div>
+            <div class="event-grid-cell">
+              <div>${formatDate(event.start)}</div>
+              <div style="color:#888;">~ ${formatDate(event.end)}</div>
+            </div>
+            <div class="event-grid-cell actions">
+              <button class="event-action" title="보기">🔗</button>
+            </div>
+          `;
+          grid.appendChild(row);
+        });
+      } else if (currentView === 'card') {
+        grid.className = 'event-card-grid';
+        grid.innerHTML = '';
+        events.forEach((event, idx) => {
+          const card = document.createElement('div');
+          card.className = 'event-card';
+          card.innerHTML = `
+            <img class="event-img" src="${event.images[0] || ''}" alt="이벤트 이미지">
+            <div class="event-content">
+              <div class="event-title">${event.title}</div>
+              <div class="event-meta">${event.competitor ? event.competitor + ' · ' : ''}${event.game}</div>
+              <div class="event-info">${event.start} ~ ${event.end}</div>
+              <div class="event-info">플랫폼: ${event.platform} | 종류: ${event.type}</div>
+              <div class="event-actions">
+                <button class="event-action" title="보기">🔗</button>
+              </div>
+            </div>
+          `;
+          // 카드 전체 클릭 시 상세 모달 열기
+          card.onclick = function(e) {
+            if (e.target.closest('.event-action')) return;
+            showEventDetail(event);
+          };
+          // 🔗 버튼 클릭 시 상세 모달 열기
+          card.querySelector('.event-action').onclick = function(e) {
+            e.stopPropagation();
+            showEventDetail(event);
+          };
+          grid.appendChild(card);
+        });
+      }
+      // 상세/수정 트리거 등 기존 바인딩 함수 재호출 필요
       bindEventDetailTriggers && bindEventDetailTriggers();
+    }
+
+    function showEventDetail(event) {
+      document.getElementById('detailTitle').textContent = event.title;
+      document.getElementById('detailCompetitor').textContent = event.competitor;
+      document.getElementById('detailGame').textContent = event.game;
+      document.getElementById('detailType').textContent = event.type;
+      document.getElementById('detailImage').src = event.images[0] || '';
+      document.getElementById('detailContent').textContent = event.content || '';
+      document.getElementById('detailBenefit').textContent = event.benefit || '';
+      document.getElementById('detailPeriod').textContent = `${formatDate(event.start)} ~ ${formatDate(event.end)}`;
+      document.getElementById('detailPlatform').textContent = event.platform;
+      document.getElementById('detailType2').textContent = event.type;
+      document.getElementById('detailCreated').textContent = 'N/A';
+      document.getElementById('detailUpdated').textContent = 'N/A';
+      updateDetailLink(event.link);
+      eventDetailModal.classList.add('show');
     }
 
     // 3. 최초 렌더링
@@ -975,31 +1216,58 @@
     const modalTitle = document.querySelector('#eventModal .modal-title');
 
     function bindEventDetailTriggers() {
-      document.querySelectorAll('.event-detail-trigger').forEach(img => {
-        img.onclick = function() {
-          document.getElementById('detailTitle').textContent = img.dataset.title;
-          document.getElementById('detailCompetitor').textContent = img.dataset.competitor;
-          document.getElementById('detailGame').textContent = img.dataset.game;
-          document.getElementById('detailType').textContent = img.dataset.type;
-          document.getElementById('detailImage').src = img.src;
-          document.getElementById('detailContent').textContent = img.dataset.content;
-          document.getElementById('detailBenefit').textContent = img.dataset.benefit;
-          updateDetailLink(img.dataset.link);
-          document.getElementById('detailPeriod').textContent = img.dataset.period;
-          document.getElementById('detailPlatform').textContent = img.dataset.platform;
-          document.getElementById('detailType2').textContent = img.dataset.type;
-          document.getElementById('detailCreated').textContent = img.dataset.created;
-          document.getElementById('detailUpdated').textContent = img.dataset.updated;
-          // 수정 버튼에 현재 이미지의 데이터 저장
-          editEventBtn.dataset.img = img.src;
-          for (const key in img.dataset) {
-            editEventBtn.dataset[key] = img.dataset[key];
+      document.querySelectorAll('.event-grid-row').forEach(row => {
+        row.querySelectorAll('.event-action').forEach(actionBtn => {
+          actionBtn.onclick = function() {
+            const eventData = {};
+            row.querySelectorAll('.event-grid-cell').forEach(cell => {
+              if (cell.classList.contains('img')) {
+                eventData.image = cell.querySelector('img').src;
+              } else if (cell.textContent.includes('이벤트')) {
+                eventData.title = cell.textContent.trim();
+              } else if (cell.textContent.includes('경쟁사/게임')) {
+                const [competitor, game] = cell.textContent.trim().split('·');
+                eventData.competitor = competitor.trim();
+                eventData.game = game.trim();
+              } else if (cell.textContent.includes('플랫폼')) {
+                eventData.platform = cell.textContent.trim();
+              } else if (cell.textContent.includes('기간')) {
+                const [start, end] = cell.textContent.trim().split('~');
+                eventData.start = start.trim().replace('년 ', '-').replace('월 ', '-').replace('일', '');
+                eventData.end = end.trim().replace('년 ', '-').replace('월 ', '-').replace('일', '');
+              } else if (cell.textContent.includes('작업')) {
+                // 수정 버튼은 별도로 처리
+              }
+            });
+            // 이미지 데이터는 별도로 처리
+            const imgCell = row.querySelector('.event-grid-cell.img');
+            const imgSrc = imgCell ? imgCell.querySelector('img').src : '';
+            eventData.images = imgSrc ? [imgSrc] : [];
+
+            // 상세 모달 열기
+            document.getElementById('detailTitle').textContent = eventData.title;
+            document.getElementById('detailCompetitor').textContent = eventData.competitor;
+            document.getElementById('detailGame').textContent = eventData.game;
+            document.getElementById('detailType').textContent = eventData.type;
+            document.getElementById('detailImage').src = eventData.images[0] || '';
+            document.getElementById('detailContent').textContent = ''; // 상세 내용은 모달에서 별도로 입력
+            document.getElementById('detailBenefit').textContent = ''; // 혜택/보상은 모달에서 별도로 입력
+            document.getElementById('detailPeriod').textContent = `${formatDate(eventData.start)} ~ ${formatDate(eventData.end)}`;
+            document.getElementById('detailPlatform').textContent = eventData.platform;
+            document.getElementById('detailType2').textContent = eventData.type;
+            document.getElementById('detailCreated').textContent = 'N/A'; // 생성일은 데이터에 없으므로 대체
+            document.getElementById('detailUpdated').textContent = 'N/A'; // 수정일은 데이터에 없으므로 대체
+
+            // 수정 버튼에 현재 이미지의 데이터 저장
+            editEventBtn.dataset.img = eventData.images[0] || '';
+            for (const key in eventData) {
+              editEventBtn.dataset[key] = eventData[key];
+            }
+            editEventBtn.dataset.images = JSON.stringify(eventData.images || []);
+
+            eventDetailModal.classList.add('show');
           }
-          if (img.dataset.images) {
-            editEventBtn.dataset.images = img.dataset.images;
-          }
-          eventDetailModal.classList.add('show');
-        }
+        });
       });
     }
     bindEventDetailTriggers();
@@ -1183,23 +1451,24 @@
      const checkedTypes = Array.from(document.querySelectorAll('.filter-type:checked')).map(cb => cb.value);
      const startDate = document.getElementById('filterStart').value;
      const endDate = document.getElementById('filterEnd').value;
-     document.querySelectorAll('.event-card').forEach(card => {
+     document.querySelectorAll('.event-grid-row').forEach(row => {
        let show = true;
-       // 경쟁사
-       if (checkedCompetitors.length > 0 && !checkedCompetitors.includes(card.dataset.competitor)) show = false;
-       // 게임명
-       if (show && checkedGames.length > 0 && !checkedGames.includes(card.dataset.game)) show = false;
-       // 플랫폼(여러개일 수 있음)
-       if (show && checkedPlatforms.length > 0) {
-         const cardPlatforms = (card.dataset.platform||'').split(',').map(s=>s.trim());
-         if (!checkedPlatforms.some(p => cardPlatforms.includes(p))) show = false;
+       // 이미지 셀
+       const imgCell = row.querySelector('.event-grid-cell.img');
+       const imgSrc = imgCell ? imgCell.querySelector('img').src : '';
+       const imgMatch = imgSrc.match(/^https?:\/\/[^\/]+\/[^?#]+/); // URL 패턴 매칭
+       const isImageFiltered = checkedCompetitors.length > 0 && !checkedCompetitors.includes(row.dataset.competitor) ||
+                                checkedGames.length > 0 && !checkedGames.includes(row.dataset.game) ||
+                                checkedPlatforms.length > 0 && !checkedPlatforms.some(p => row.dataset.platform.includes(p)) ||
+                                checkedTypes.length > 0 && !checkedTypes.includes(row.dataset.type) ||
+                                startDate && row.dataset.end && row.dataset.end < startDate ||
+                                endDate && row.dataset.start && row.dataset.start > endDate;
+
+       if (isImageFiltered) {
+         row.style.display = 'none';
+       } else {
+         row.style.display = '';
        }
-       // 이벤트 종류
-       if (show && checkedTypes.length > 0 && !checkedTypes.includes(card.dataset.type)) show = false;
-       // 기간
-       if (show && startDate && card.dataset.end && card.dataset.end < startDate) show = false;
-       if (show && endDate && card.dataset.start && card.dataset.start > endDate) show = false;
-       card.style.display = show ? '' : 'none';
      });
    }
    document.querySelectorAll('.filter-panel input').forEach(input => {
